@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fractal Vibration Lab — FAEM</title>
+<meta name="description" content="FAEM — Fractal Acoustic–Energy Mapping. Nodal domain scaling on Chladni plates. Open research tools."/>
+<meta name="theme-color" content="#03050a"/>
+<link rel="canonical" href="https://fractalvibrationlab.com/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://fractalvibrationlab.com/"/>
+<meta property="og:title" content="Fractal Vibration Lab — FAEM"/>
+<meta property="og:description" content="Nodal domain scaling · Chladni · open FAEM tools"/>
+<meta property="og:image" content="https://fractalvibrationlab.com/report_assets/chladni_law_test_plot.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%03050a'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%236fd8ff' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='4' fill='none' stroke='%236fd8ff' stroke-width='1.1' opacity='.75'/%3E%3Ccircle cx='16' cy='16' r='1.6' fill='%236fd8ff'/%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#03050a;--bg2:#070b14;--panel:rgba(12,18,32,.72);--panel-solid:#0c1220;
+  --border:rgba(111,216,255,.12);--border2:rgba(111,216,255,.22);
+  --text:#eef4fc;--muted:#8b97ad;--dim:#5a6578;
+  --accent:#6fd8ff;--accent2:#a8ecff;--glow:rgba(111,216,255,.35);
+  --ok:#4dffb5;--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,sans-serif;line-height:1.65;
+  min-height:100vh;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%,rgba(111,216,255,.14),transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 10%,rgba(80,120,255,.08),transparent 45%),
+    radial-gradient(ellipse 50% 30% at 50% 100%,rgba(111,216,255,.06),transparent 40%);
+}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:var(--accent2)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(3,5,10,.75);backdrop-filter:blur(20px) saturate(1.4);
+  border-bottom:1px solid var(--border);
+}
+nav .inner{
+  max-width:1080px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.logo{
+  font-weight:700;font-size:15px;letter-spacing:.02em;
+  display:flex;align-items:center;gap:10px;
+}
+.logo-mark{
+  width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(111,216,255,.2),rgba(111,216,255,.05));
+  border:1px solid var(--border2);
+  display:grid;place-items:center;
+}
+.logo-mark svg{width:16px;height:16px}
+.logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-links a{
+  font-size:13px;font-weight:500;color:var(--muted);
+  padding:8px 12px;border-radius:10px;transition:all .2s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(111,216,255,.08);text-decoration:none}
+.lang-switch{
+  display:flex;margin-left:8px;
+  border:1px solid var(--border2);border-radius:10px;overflow:hidden;
+  background:rgba(111,216,255,.04);
+}
+.lang-switch button{
+  background:transparent;border:none;color:var(--dim);
+  font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;
+  font-family:inherit;letter-spacing:.06em;transition:all .2s;
+}
+.lang-switch button.active{
+  background:rgba(111,216,255,.15);color:var(--accent);
+}
+@media(max-width:720px){
+  .nav-links{display:none}
+}
+
+/* HERO */
+.hero{
+  padding:88px 0 72px;position:relative;
+  border-bottom:1px solid var(--border);
+}
+.hero-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  opacity:.22;pointer-events:none;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:18px;
+  padding:6px 14px;border-radius:99px;
+  background:rgba(111,216,255,.08);border:1px solid var(--border);
+}
+.eyebrow::before{
+  content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 10px var(--glow);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{
+  font-size:clamp(32px,5.5vw,48px);font-weight:800;
+  letter-spacing:-.03em;line-height:1.15;margin-bottom:18px;
+  background:linear-gradient(135deg,#fff 0%,#c8e8f8 50%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-lead{
+  font-size:17px;color:var(--muted);max-width:560px;line-height:1.75;margin-bottom:28px;
+}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.badge{
+  font-size:12px;padding:6px 14px;border-radius:99px;font-weight:500;
+  border:1px solid var(--border);color:var(--muted);
+  background:rgba(255,255,255,.02);
+}
+.badge.ok{
+  border-color:rgba(77,255,181,.3);color:var(--ok);
+  background:rgba(77,255,181,.06);
+}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 22px;border-radius:12px;font-size:14px;font-weight:600;
+  border:none;cursor:pointer;font-family:inherit;transition:all .25s;
+  text-decoration:none!important;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),#4ab8e8);
+  color:#03050a;box-shadow:0 4px 24px rgba(111,216,255,.25);
+}
+.btn-primary:hover{
+  transform:translateY(-2px);box-shadow:0 8px 32px rgba(111,216,255,.35);
+  color:#03050a;
+}
+.btn-ghost{
+  background:rgba(111,216,255,.06);color:var(--muted);
+  border:1px solid var(--border2);
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent);background:rgba(111,216,255,.1)}
+
+/* SECTIONS */
+section{padding:72px 0;border-bottom:1px solid var(--border);position:relative;z-index:1}
+section:last-of-type{border-bottom:none}
+h2{
+  font-size:clamp(22px,3vw,28px);font-weight:700;
+  letter-spacing:-.02em;margin-bottom:10px;
+}
+.section-lead{color:var(--muted);margin-bottom:32px;max-width:580px;font-size:15px}
+h3{font-size:15px;font-weight:600;margin:28px 0 12px;color:var(--accent2);letter-spacing:.02em}
+p{margin-bottom:14px}
+.muted{color:var(--muted)}
+ul,ol{margin:12px 0 18px 20px;color:var(--muted)}
+li{margin-bottom:8px}
+
+/* GLASS CARDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+@media(max-width:800px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+@media(min-width:801px) and (max-width:1000px){.grid-4{grid-template-columns:1fr 1fr}}
+.card{
+  background:var(--panel);backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;transition:all .3s;
+}
+.card:hover{
+  border-color:var(--border2);transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 0 1px rgba(111,216,255,.08);
+}
+.card h4{font-size:14px;color:var(--accent);margin-bottom:8px;font-weight:600}
+.card p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
+.card .icon{
+  width:36px;height:36px;border-radius:10px;margin-bottom:14px;
+  background:rgba(111,216,255,.1);border:1px solid var(--border);
+  display:grid;place-items:center;font-size:16px;
+}
+
+/* PANEL */
+.panel{
+  background:var(--panel);backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;margin:24px 0;
+}
+.panel.highlight{
+  border-color:rgba(77,255,181,.25);
+  background:linear-gradient(145deg,rgba(77,255,181,.06),var(--panel));
+  box-shadow:0 0 40px rgba(77,255,181,.05);
+}
+.eq{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:15px;
+  background:rgba(0,0,0,.35);border:1px solid var(--border);
+  border-radius:12px;padding:16px 20px;margin:16px 0;
+  overflow-x:auto;color:var(--accent2);letter-spacing:.02em;
+}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border)}
+th{
+  color:var(--accent);font-weight:600;font-size:11px;
+  text-transform:uppercase;letter-spacing:.08em;
+  background:rgba(111,216,255,.04);
+}
+td{color:var(--muted)}
+tr:last-child td{border-bottom:none}
+tr:hover td{color:var(--text);background:rgba(111,216,255,.03)}
+
+/* PLOT */
+.plot-box{
+  background:rgba(0,0,0,.3);border-radius:var(--radius);padding:16px;
+  border:1px solid var(--border);margin:24px 0;
+}
+.plot-box img{max-width:100%;height:auto;border-radius:10px;display:block;margin:0 auto}
+.plot-cap{font-size:12px;color:var(--dim);margin-top:12px}
+
+/* ATLAS */
+.atlas-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;transition:all .3s;
+}
+.atlas-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.atlas-card .thumb{
+  height:100px;background:linear-gradient(160deg,#0a1020,#060a12);
+  display:flex;align-items:center;justify-content:center;
+  border-bottom:1px solid var(--border);
+  font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);
+  position:relative;overflow:hidden;
+}
+.atlas-card .thumb::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 60%,rgba(111,216,255,.12),transparent 60%);
+}
+.atlas-card .meta{padding:14px}
+.atlas-card .meta .f{font-size:14px;font-weight:600}
+.atlas-card .meta .d{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* STEPS */
+.steps{counter-reset:step;list-style:none;margin-left:0}
+.steps li{
+  counter-increment:step;position:relative;
+  padding:16px 16px 16px 56px;margin-bottom:10px;color:var(--muted);
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  transition:border-color .2s;
+}
+.steps li:hover{border-color:var(--border2)}
+.steps li::before{
+  content:counter(step);position:absolute;left:14px;top:16px;
+  width:30px;height:30px;border-radius:10px;
+  background:rgba(111,216,255,.1);border:1px solid var(--border2);
+  color:var(--accent);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* FOOTER */
+footer{
+  padding:48px 0 64px;color:var(--dim);font-size:13px;
+  border-top:1px solid var(--border);position:relative;z-index:1;
+}
+.footer-grid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);font-weight:500}
+.footer-links a:hover{color:var(--accent)}
+
+code{
+  font-family:"JetBrains Mono",monospace;font-size:.88em;
+  background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;
+  border:1px solid var(--border);color:var(--accent2);
+}
+
+/* STAT STRIP */
+.stat-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:32px 0 8px;
+}
+@media(max-width:600px){.stat-strip{grid-template-columns:1fr}}
+.stat-item{
+  text-align:center;padding:20px 12px;
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+}
+.stat-item .num{
+  font-size:28px;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-family:"JetBrains Mono",monospace;
+}
+.stat-item .lbl{font-size:12px;color:var(--muted);margin-top:6px;font-weight:500}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="#6fd8ff" stroke-width="1.2"/><circle cx="8" cy="8" r="2" fill="#6fd8ff"/></svg>
+      </div>
+      Fractal <span>Vibration</span> Lab
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#faem" data-i18n="nav_faem">FAEM</a>
+        <a href="#chladni" data-i18n="nav_chladni">Chladni</a>
+        <a href="#atlas" data-i18n="nav_atlas">Atlas</a>
+        <a href="#tools" data-i18n="nav_tools">Narzędzia</a>
+        <a href="#reproduce" data-i18n="nav_reproduce">Jak powtórzyć</a>
+        <a href="#next" data-i18n="nav_next">Dalej</a>
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" id="btnPL" class="active" onclick="setLang('pl')">PL</button>
+        <button type="button" id="btnEN" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="eyebrow">FAEM · Fractal Acoustic–Energy Mapping</div>
+    <h1 data-i18n="hero_title">Mapowanie wzorów drgań</h1>
+    <p class="hero-lead" data-i18n="hero_lead">
+      Pipeline badawczy łączący analizę widmową z geometrią wzorów falowych —
+      od figur Chladniego po pola syntetyczne. Ilościowy opis złożoności nodalnej.
+    </p>
+    <div class="badge-row">
+      <span class="badge ok" data-i18n="badge_chladni">Zgodność z Prawem Chladniego · n=8</span>
+      <span class="badge" data-i18n="badge_open">Open tools · PL / EN</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="faem_generator.html" data-i18n="cta_gen">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v10H3z" stroke="currentColor" stroke-width="1.3"/><path d="M3 8h10M8 3v10" stroke="currentColor" stroke-width="1.2"/></svg>
+        Otwórz generator
+      </a>
+      <a class="btn btn-ghost" href="VERIFICATION.md" data-i18n="cta_report">Raport weryfikacji</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-item"><div class="num">0.521</div><div class="lbl" data-i18n="stat1">wykładnik skalowania</div></div>
+      <div class="stat-item"><div class="num">0.94</div><div class="lbl" data-i18n="stat2">R² dopasowania</div></div>
+      <div class="stat-item"><div class="num">8</div><div class="lbl" data-i18n="stat3">zdjęć w teście</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="faem">
+  <div class="wrap">
+    <h2 data-i18n="faem_h2">Czym jest FAEM</h2>
+    <p class="section-lead" data-i18n="faem_lead">
+      Fractal Acoustic–Energy Mapping: generacja lub rejestracja wzoru → analiza →
+      miary złożoności → porównanie ze skalowaniem teoretycznym.
+    </p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="icon">◎</div>
+        <h4 data-i18n="faem_c1_t">Wejście</h4>
+        <p data-i18n="faem_c1_p">Zdjęcia płytek Chladniego, nagrania drgań lub pola syntetyczne (superpozycja modów własnych).</p>
+      </div>
+      <div class="card">
+        <div class="icon">▣</div>
+        <h4 data-i18n="faem_c2_t">Miary</h4>
+        <p data-i18n="faem_c2_p">Box-counting Df, liczba domen między liniami węzłowymi, moc w oknie częstotliwości.</p>
+      </div>
+      <div class="card">
+        <div class="icon">≈</div>
+        <h4 data-i18n="faem_c3_t">Fizyka odniesienia</h4>
+        <p data-i18n="faem_c3_p">Prawo Chladniego / Rayleigh: złożoność geometryczna rośnie z częstotliwością jak √f.</p>
+      </div>
+      <div class="card">
+        <div class="icon">→</div>
+        <h4 data-i18n="faem_c4_t">Zastosowania</h4>
+        <p data-i18n="faem_c4_p">Wizualizacja rezonansów, edukacja, testowanie hipotez skalowania, projektowanie eksperymentów.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="chladni">
+  <div class="wrap">
+    <h2 data-i18n="ch_h2">Skalowanie nodalne</h2>
+    <p class="section-lead" data-i18n="ch_lead">
+      Na realnych zdjęciach kwadratowej płytki sprawdzono skalowanie liczby domen
+      z częstotliwością względem klasycznej teorii.
+    </p>
+    <div class="panel highlight">
+      <p class="muted" data-i18n="ch_result" style="margin-bottom:8px">Wynik · 8 zdjęć · 155–6800 Hz</p>
+      <div class="eq">N<sub>domains</sub> ∝ f<sup>0.521 ± 0.054</sup> &nbsp;&nbsp; R² = 0.94</div>
+      <p class="muted" style="margin:0" data-i18n="ch_theory">Teoria (płyty okrągłe): wykładnik 0,5.</p>
+    </div>
+    <h3 data-i18n="ch_method">Metoda</h3>
+    <ul>
+      <li data-i18n="ch_m1">8 zdjęć rzeczywistej płytki kwadratowej (skullsinthestars.com)</li>
+      <li data-i18n="ch_m2">Automatyczne wykrycie granic, przycięcie, progowanie Otsu</li>
+      <li data-i18n="ch_m3">Domykanie morfologiczne skalowane do rozdzielczości</li>
+      <li data-i18n="ch_m4">Zliczenie domen tła; odrzucenie szumu (&lt; 0,3% powierzchni)</li>
+      <li data-i18n="ch_m5">Regresja log(N) vs log(f)</li>
+    </ul>
+    <div class="plot-box">
+      <img src="report_assets/chladni_law_test_plot.png" alt="Chladni scaling plot" width="800"/>
+      <p class="plot-cap" data-i18n="ch_plot_cap">N ~ f^0.521 (czerwona) vs teoria N ~ f^0.5 (szara).</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th data-i18n="th_f">Częstotliwość (Hz)</th><th data-i18n="th_n">Liczba domen</th></tr></thead>
+        <tbody>
+          <tr><td>155</td><td>3</td></tr>
+          <tr><td>467.5</td><td>8</td></tr>
+          <tr><td>1146</td><td>8</td></tr>
+          <tr><td>2250</td><td>13</td></tr>
+          <tr><td>2593</td><td>16</td></tr>
+          <tr><td>4930</td><td>16</td></tr>
+          <tr><td>6197</td><td>24</td></tr>
+          <tr><td>6800</td><td>28</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 data-i18n="ch_lim">Ograniczenia</h3>
+    <ul>
+      <li data-i18n="ch_l1">n = 8 — mała próba</li>
+      <li data-i18n="ch_l2">Jedna płytka, jedno źródło zdjęć</li>
+      <li data-i18n="ch_l3">Teoria klasyczna dla płyt okrągłych; tu geometria kwadratowa</li>
+      <li data-i18n="ch_l4">Parametr domykania skalibrowany spójnie, jeden z możliwych wyborów</li>
+    </ul>
+    <div class="cta-row" style="margin-top:20px">
+      <a class="btn btn-ghost" href="VERIFICATION.md" data-i18n="cta_full_report">Pełny raport</a>
+    </div>
+  </div>
+</section>
+
+<section id="atlas">
+  <div class="wrap">
+    <h2 data-i18n="atlas_h2">Atlas częstotliwości</h2>
+    <p class="section-lead" data-i18n="atlas_lead">Punkty użyte w teście skalowania.</p>
+    <div class="grid-4" id="atlasGrid"></div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="wrap">
+    <h2 data-i18n="tools_h2">Narzędzia</h2>
+    <p class="section-lead" data-i18n="tools_lead">Otwarte komponenty do generacji i analizy.</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="icon">◈</div>
+        <h4 data-i18n="tools_g_t">Generator wzorów</h4>
+        <p data-i18n="tools_g_p">Mody własne, Df, domeny, regresja na żywo, eksport CSV.</p>
+        <div class="cta-row" style="margin-top:16px">
+          <a class="btn btn-primary" href="faem_generator.html" data-i18n="tools_g_btn">Uruchom</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="icon">≡</div>
+        <h4 data-i18n="tools_s_t">Raport</h4>
+        <p data-i18n="tools_s_p">Metoda, tabela domen, ograniczenia — VERIFICATION.md.</p>
+        <div class="cta-row" style="margin-top:16px">
+          <a class="btn btn-ghost" href="VERIFICATION.md" data-i18n="tools_s_btn">Otwórz</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reproduce">
+  <div class="wrap">
+    <h2 data-i18n="rep_h2">Jak powtórzyć</h2>
+    <p class="section-lead" data-i18n="rep_lead">Minimalna ścieżka do własnej serii N vs f.</p>
+    <ol class="steps">
+      <li data-i18n="rep_1">Płyta metalowa + generator funkcyjny + głośnik / wzbudnik.</li>
+      <li data-i18n="rep_2">Stałe światło i kamera; ciemne tło pod płytą.</li>
+      <li data-i18n="rep_3">Dla każdej f: stabilny wzór → zdjęcie PNG.</li>
+      <li data-i18n="rep_4">Opcjonalnie: zapis audio / akcelerometr.</li>
+      <li data-i18n="rep_5">Crop → Otsu → domykanie skalowane → domeny.</li>
+      <li data-i18n="rep_6">Regresja log–log; raportuj n, R², niepewność.</li>
+      <li data-i18n="rep_7">Porównaj wykładnik z 0,5 i zapisz ograniczenia.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="next">
+  <div class="wrap">
+    <h2 data-i18n="next_h2">Dalej</h2>
+    <p class="section-lead" data-i18n="next_lead">Naturalne rozszerzenia.</p>
+    <div class="grid-2">
+      <div class="card"><h4 data-i18n="next_1_t">Kontrolowany eksperyment</h4><p data-i18n="next_1_p">Własna płyta, 15–20 częstotliwości, zapis sygnału — pełny łańcuch widmo → domeny → Df.</p></div>
+      <div class="card"><h4 data-i18n="next_2_t">Geometrie</h4><p data-i18n="next_2_p">Kwadrat vs koło: jak zmienia się wykładnik α w N ~ f^α.</p></div>
+      <div class="card"><h4 data-i18n="next_3_t">Df + domeny</h4><p data-i18n="next_3_p">Wymiar fraktalny linii węzłowych obok liczby domen na tych samych obrazach.</p></div>
+      <div class="card"><h4 data-i18n="next_4_t">Atlas interaktywny</h4><p data-i18n="next_4_p">Galeria wzorów z metadanymi f, Df, N.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="about">
+  <div class="wrap">
+    <h2 data-i18n="about_h2">O projekcie</h2>
+    <p class="section-lead" data-i18n="about_lead">
+      Fractal Vibration Lab prowadzi otwarte badania nad mapowaniem złożoności wzorów drgań
+      (FAEM). Wyniki i narzędzia są dostępne publicznie — do edukacji, replikacji i dalszego rozwoju.
+    </p>
+    <div class="panel">
+      <p class="muted" style="margin:0" data-i18n="about_body">
+        Autor: Astro_Katt. Strona i generator nie ogłaszają nowego uniwersalnego prawa fizyki —
+        dokumentują pipeline analityczny oraz wstępne odtworzenie klasycznego skalowania Chladniego
+        na małym zbiorze realnych zdjęć.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2 data-i18n="faq_h2">FAQ</h2>
+    <p class="section-lead" data-i18n="faq_lead">Najczęstsze pytania w skrócie.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4 data-i18n="faq_q1">Czym jest FAEM?</h4>
+        <p data-i18n="faq_a1">Pipeline: wzór (zdjęcie lub symulacja) → binaryzacja → miary złożoności (domeny, Df) → porównanie z teorią.</p>
+      </div>
+      <div class="card">
+        <h4 data-i18n="faq_q2">Czy to nowe prawo fizyki?</h4>
+        <p data-i18n="faq_a2">Nie. To metoda analizy i wstępna zgodność z klasycznym Prawem Chladniego (wykładnik ≈ 0,5).</p>
+      </div>
+      <div class="card">
+        <h4 data-i18n="faq_q3">Skąd pochodzą zdjęcia?</h4>
+        <p data-i18n="faq_a3">Publiczna seria demonstracyjna płytki kwadratowej (skullsinthestars.com), częstotliwości 155–6800 Hz.</p>
+      </div>
+      <div class="card">
+        <h4 data-i18n="faq_q4">Jak mogę powtórzyć wynik?</h4>
+        <p data-i18n="faq_a4">Sekcja „Jak powtórzyć” + raport VERIFICATION.md opisują pipeline krok po kroku.</p>
+      </div>
+      <div class="card">
+        <h4 data-i18n="faq_q5">Do czego służy generator?</h4>
+        <p data-i18n="faq_a5">Do eksploracji syntetycznych wzorów i testowania hipotez — nie zastępuje eksperymentu laboratoryjnego.</p>
+      </div>
+      <div class="card">
+        <h4 data-i18n="faq_q6">Jak cytować?</h4>
+        <p data-i18n="faq_a6">Astro_Katt (2026). FAEM — Fractal Vibration Lab. https://fractalvibrationlab.com</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2 data-i18n="contact_h2">Kontakt</h2>
+    <p class="muted">Fractal Vibration Lab · Astro_Katt<br>
+    <a href="mailto:fractalvibrationlab@gmail.com">fractalvibrationlab@gmail.com</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <strong style="color:var(--muted)">Fractal Vibration Lab</strong><br>
+      <span data-i18n="footer_tag">Open research · PL / EN</span><br>
+      <span style="font-size:12px;opacity:.85" data-i18n="footer_lic">Treść: CC BY 4.0 · Kod generatora: MIT</span>
+    </div>
+    <div class="footer-links">
+      <a href="faem_generator.html" data-i18n="ft_gen">Generator</a>
+      <a href="VERIFICATION.md" data-i18n="ft_report">Raport</a>
+      <a href="mailto:fractalvibrationlab@gmail.com">Email</a>
+      <a href="https://fractalvibrationlab.com/" data-i18n="ft_site">fractalvibrationlab.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const ATLAS=[{f:155,n:3},{f:467.5,n:8},{f:1146,n:8},{f:2250,n:13},{f:2593,n:16},{f:4930,n:16},{f:6197,n:24},{f:6800,n:28}];
+function renderAtlas(lang){
+  const g=document.getElementById("atlasGrid");
+  const d=lang==="en"?"domains":"domen";
+  g.innerHTML=ATLAS.map(p=>`<div class="atlas-card"><div class="thumb">${p.f} Hz</div><div class="meta"><div class="f">${p.f} Hz</div><div class="d">N = ${p.n} ${d}</div></div></div>`).join("");
+}
+const I18N={
+pl:{
+nav_faem:"FAEM",nav_chladni:"Chladni",nav_atlas:"Atlas",nav_tools:"Narzędzia",nav_reproduce:"Jak powtórzyć",nav_next:"Dalej",
+hero_title:"Mapowanie wzorów drgań",
+hero_lead:"Pipeline badawczy łączący analizę widmową z geometrią wzorów falowych — od figur Chladniego po pola syntetyczne. Ilościowy opis złożoności nodalnej.",
+badge_chladni:"Zgodność z Prawem Chladniego · n=8",badge_open:"Open tools · PL / EN",
+cta_gen:"Otwórz generator",cta_report:"Raport weryfikacji",cta_full_report:"Pełny raport",
+stat1:"wykładnik skalowania",stat2:"R² dopasowania",stat3:"zdjęć w teście",
+faem_h2:"Czym jest FAEM",faem_lead:"Fractal Acoustic–Energy Mapping: generacja lub rejestracja wzoru → analiza → miary złożoności → porównanie ze skalowaniem teoretycznym.",
+faem_c1_t:"Wejście",faem_c1_p:"Zdjęcia płytek Chladniego, nagrania drgań lub pola syntetyczne (superpozycja modów własnych).",
+faem_c2_t:"Miary",faem_c2_p:"Box-counting Df, liczba domen między liniami węzłowymi, moc w oknie częstotliwości.",
+faem_c3_t:"Fizyka odniesienia",faem_c3_p:"Prawo Chladniego / Rayleigh: złożoność geometryczna rośnie z częstotliwością jak √f.",
+faem_c4_t:"Zastosowania",faem_c4_p:"Wizualizacja rezonansów, edukacja, testowanie hipotez skalowania, projektowanie eksperymentów.",
+ch_h2:"Skalowanie nodalne",ch_lead:"Na realnych zdjęciach kwadratowej płytki sprawdzono skalowanie liczby domen z częstotliwością względem klasycznej teorii.",
+ch_result:"Wynik · 8 zdjęć · 155–6800 Hz",ch_theory:"Teoria (płyty okrągłe): wykładnik 0,5.",
+ch_method:"Metoda",ch_m1:"8 zdjęć rzeczywistej płytki kwadratowej (skullsinthestars.com)",
+ch_m2:"Automatyczne wykrycie granic, przycięcie, progowanie Otsu",ch_m3:"Domykanie morfologiczne skalowane do rozdzielczości",
+ch_m4:"Zliczenie domen tła; odrzucenie szumu (< 0,3% powierzchni)",ch_m5:"Regresja log(N) vs log(f)",
+ch_plot_cap:"N ~ f^0.521 (czerwona) vs teoria N ~ f^0.5 (szara).",
+th_f:"Częstotliwość (Hz)",th_n:"Liczba domen",ch_lim:"Ograniczenia",
+ch_l1:"n = 8 — mała próba",ch_l2:"Jedna płytka, jedno źródło zdjęć",
+ch_l3:"Teoria klasyczna dla płyt okrągłych; tu geometria kwadratowa",ch_l4:"Parametr domykania skalibrowany spójnie, jeden z możliwych wyborów",
+atlas_h2:"Atlas częstotliwości",atlas_lead:"Punkty użyte w teście skalowania.",
+tools_h2:"Narzędzia",tools_lead:"Otwarte komponenty do generacji i analizy.",
+tools_g_t:"Generator wzorów",tools_g_p:"Mody własne, Df, domeny, regresja na żywo, eksport CSV.",tools_g_btn:"Uruchom",
+tools_s_t:"Raport",tools_s_p:"Metoda, tabela domen, ograniczenia — VERIFICATION.md.",tools_s_btn:"Otwórz",
+rep_h2:"Jak powtórzyć",rep_lead:"Minimalna ścieżka do własnej serii N vs f.",
+rep_1:"Płyta metalowa + generator funkcyjny + głośnik / wzbudnik.",
+rep_2:"Stałe światło i kamera; ciemne tło pod płytą.",
+rep_3:"Dla każdej f: stabilny wzór → zdjęcie PNG.",
+rep_4:"Opcjonalnie: zapis audio / akcelerometr.",
+rep_5:"Crop → Otsu → domykanie skalowane → domeny.",
+rep_6:"Regresja log–log; raportuj n, R², niepewność.",
+rep_7:"Porównaj wykładnik z 0,5 i zapisz ograniczenia.",
+next_h2:"Dalej",next_lead:"Naturalne rozszerzenia.",
+next_1_t:"Kontrolowany eksperyment",next_1_p:"Własna płyta, 15–20 częstotliwości, zapis sygnału — pełny łańcuch widmo → domeny → Df.",
+next_2_t:"Geometrie",next_2_p:"Kwadrat vs koło: jak zmienia się wykładnik α w N ~ f^α.",
+next_3_t:"Df + domeny",next_3_p:"Wymiar fraktalny linii węzłowych obok liczby domen na tych samych obrazach.",
+next_4_t:"Atlas interaktywny",next_4_p:"Galeria wzorów z metadanymi f, Df, N.",
+nav_faq:"FAQ",
+about_h2:"O projekcie",
+about_lead:"Fractal Vibration Lab prowadzi otwarte badania nad mapowaniem złożoności wzorów drgań (FAEM). Wyniki i narzędzia są dostępne publicznie — do edukacji, replikacji i dalszego rozwoju.",
+about_body:"Autor: Astro_Katt. Strona i generator nie ogłaszają nowego uniwersalnego prawa fizyki — dokumentują pipeline analityczny oraz wstępne odtworzenie klasycznego skalowania Chladniego na małym zbiorze realnych zdjęć.",
+faq_h2:"FAQ",faq_lead:"Najczęstsze pytania w skrócie.",
+faq_q1:"Czym jest FAEM?",faq_a1:"Pipeline: wzór (zdjęcie lub symulacja) → binaryzacja → miary złożoności (domeny, Df) → porównanie z teorią.",
+faq_q2:"Czy to nowe prawo fizyki?",faq_a2:"Nie. To metoda analizy i wstępna zgodność z klasycznym Prawem Chladniego (wykładnik ≈ 0,5).",
+faq_q3:"Skąd pochodzą zdjęcia?",faq_a3:"Publiczna seria demonstracyjna płytki kwadratowej (skullsinthestars.com), częstotliwości 155–6800 Hz.",
+faq_q4:"Jak mogę powtórzyć wynik?",faq_a4:"Sekcja „Jak powtórzyć” + raport VERIFICATION.md opisują pipeline krok po kroku.",
+faq_q5:"Do czego służy generator?",faq_a5:"Do eksploracji syntetycznych wzorów i testowania hipotez — nie zastępuje eksperymentu laboratoryjnego.",
+faq_q6:"Jak cytować?",faq_a6:"Astro_Katt (2026). FAEM — Fractal Vibration Lab. https://fractalvibrationlab.com",
+contact_h2:"Kontakt",footer_tag:"Open research · PL / EN",footer_lic:"Treść: CC BY 4.0 · Kod generatora: MIT",
+ft_gen:"Generator",ft_report:"Raport",ft_site:"fractalvibrationlab.com"
+},
+en:{
+nav_faem:"FAEM",nav_chladni:"Chladni",nav_atlas:"Atlas",nav_tools:"Tools",nav_reproduce:"Reproduce",nav_next:"Next",
+hero_title:"Mapping vibration patterns",
+hero_lead:"A research pipeline linking spectral analysis with the geometry of wave patterns — from Chladni figures to synthetic fields. Quantitative nodal complexity.",
+badge_chladni:"Agreement with Chladni’s law · n=8",badge_open:"Open tools · PL / EN",
+cta_gen:"Open generator",cta_report:"Verification report",cta_full_report:"Full report",
+stat1:"scaling exponent",stat2:"fit R²",stat3:"images in test",
+faem_h2:"What FAEM is",faem_lead:"Fractal Acoustic–Energy Mapping: generate or record a pattern → analysis → complexity measures → comparison with theoretical scaling.",
+faem_c1_t:"Input",faem_c1_p:"Chladni plate photos, vibration recordings, or synthetic fields (eigenmode superposition).",
+faem_c2_t:"Measures",faem_c2_p:"Box-counting Df, nodal domain count, power in a frequency window.",
+faem_c3_t:"Reference physics",faem_c3_p:"Chladni / Rayleigh: geometric complexity grows with frequency as √f.",
+faem_c4_t:"Uses",faem_c4_p:"Resonance visualisation, education, scaling tests, experiment design.",
+ch_h2:"Nodal scaling",ch_lead:"On real photos of a square plate we tested how domain count scales with frequency against classical theory.",
+ch_result:"Result · 8 images · 155–6800 Hz",ch_theory:"Theory (circular plates): exponent 0.5.",
+ch_method:"Method",ch_m1:"8 photos of a real square plate (skullsinthestars.com)",
+ch_m2:"Automatic border detection, crop, Otsu thresholding",ch_m3:"Morphological closing scaled to resolution",
+ch_m4:"Background domain count; discard noise (< 0.3% of area)",ch_m5:"Regression log(N) vs log(f)",
+ch_plot_cap:"N ~ f^0.521 (red) vs theory N ~ f^0.5 (grey).",
+th_f:"Frequency (Hz)",th_n:"Domain count",ch_lim:"Limitations",
+ch_l1:"n = 8 — small sample",ch_l2:"Single plate, single image source",
+ch_l3:"Classical theory for circular plates; geometry here is square",ch_l4:"Closing parameter calibrated uniformly; one of possible choices",
+atlas_h2:"Frequency atlas",atlas_lead:"Points used in the scaling test.",
+tools_h2:"Tools",tools_lead:"Open components for generation and analysis.",
+tools_g_t:"Pattern generator",tools_g_p:"Eigenmodes, Df, domains, live regression, CSV export.",tools_g_btn:"Launch",
+tools_s_t:"Report",tools_s_p:"Method, domain table, limitations — VERIFICATION.md.",tools_s_btn:"Open",
+rep_h2:"How to reproduce",rep_lead:"Minimal path to your own N vs f series.",
+rep_1:"Metal plate + function generator + speaker / contact driver.",
+rep_2:"Fixed light and camera; dark background under the plate.",
+rep_3:"For each f: stable pattern → PNG photo.",
+rep_4:"Optional: audio / accelerometer recording.",
+rep_5:"Crop → Otsu → scaled closing → domains.",
+rep_6:"Log–log regression; report n, R², uncertainty.",
+rep_7:"Compare exponent to 0.5 and state limitations.",
+next_h2:"Next",next_lead:"Natural extensions.",
+next_1_t:"Controlled experiment",next_1_p:"Own plate, 15–20 frequencies, signal recording — full chain spectrum → domains → Df.",
+next_2_t:"Geometries",next_2_p:"Square vs circle: how exponent α in N ~ f^α changes.",
+next_3_t:"Df + domains",next_3_p:"Fractal dimension of nodal lines alongside domain count on the same images.",
+next_4_t:"Interactive atlas",next_4_p:"Pattern gallery with f, Df, N metadata.",
+nav_faq:"FAQ",
+about_h2:"About",
+about_lead:"Fractal Vibration Lab runs open research on mapping the complexity of vibration patterns (FAEM). Results and tools are public — for education, replication and further work.",
+about_body:"Author: Astro_Katt. The site and generator do not claim a new universal physical law — they document an analysis pipeline and a preliminary recovery of classical Chladni scaling on a small set of real images.",
+faq_h2:"FAQ",faq_lead:"Short answers to common questions.",
+faq_q1:"What is FAEM?",faq_a1:"Pipeline: pattern (photo or simulation) → binarisation → complexity measures (domains, Df) → comparison with theory.",
+faq_q2:"Is this a new law of physics?",faq_a2:"No. It is an analysis method and preliminary agreement with classical Chladni’s law (exponent ≈ 0.5).",
+faq_q3:"Where do the photos come from?",faq_a3:"Public demonstration series of a square plate (skullsinthestars.com), frequencies 155–6800 Hz.",
+faq_q4:"How can I reproduce the result?",faq_a4:"The “How to reproduce” section and VERIFICATION.md describe the pipeline step by step.",
+faq_q5:"What is the generator for?",faq_a5:"Synthetic pattern exploration and hypothesis testing — it does not replace a lab experiment.",
+faq_q6:"How to cite?",faq_a6:"Astro_Katt (2026). FAEM — Fractal Vibration Lab. https://fractalvibrationlab.com",
+contact_h2:"Contact",footer_tag:"Open research · PL / EN",footer_lic:"Content: CC BY 4.0 · Generator code: MIT",
+ft_gen:"Generator",ft_report:"Report",ft_site:"fractalvibrationlab.com"
+}};
+function setLang(lang){
+  document.documentElement.lang=lang;
+  document.getElementById("btnPL").classList.toggle("active",lang==="pl");
+  document.getElementById("btnEN").classList.toggle("active",lang==="en");
+  const d=I18N[lang];
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k=el.getAttribute("data-i18n");
+    if(d[k]!=null){
+      if(el.classList.contains("btn")||el.classList.contains("btn-primary")){
+        const svg=el.querySelector("svg");
+        el.textContent=d[k];
+        if(svg)el.prepend(svg);
+      }else el.textContent=d[k];
+    }
+  });
+  renderAtlas(lang);
+  try{localStorage.setItem("faem_lang",lang)}catch(_){}
+}
+(function(){
+  let lang="pl";
+  try{const s=localStorage.getItem("faem_lang");if(s==="en"||s==="pl")lang=s;
+  else if(navigator.language&&navigator.language.toLowerCase().startsWith("en"))lang="en"}catch(_){}
+  setLang(lang);
+})();
+(function(){
+  const c=document.getElementById("heroCanvas");if(!c)return;
+  const ctx=c.getContext("2d");let t=0;
+  function resize(){const r=c.parentElement.getBoundingClientRect();c.width=r.width|0;c.height=r.height|0}
+  function frame(){
+    const w=c.width,h=c.height;ctx.clearRect(0,0,w,h);
+    for(let k=0;k<4;k++){
+      ctx.beginPath();ctx.strokeStyle=`rgba(111,216,255,${0.15+k*0.06})`;ctx.lineWidth=1.2;
+      const amp=18+k*10,freq=0.006+k*0.0025,ph=t*(0.35+k*0.12)+k*1.2;
+      for(let x=0;x<w;x+=2){
+        const y=h*0.5+Math.sin(x*freq+ph)*amp+Math.sin(x*freq*2.1+ph*0.7)*(amp*0.3);
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    t+=0.016;requestAnimationFrame(frame);
+  }
+  resize();window.addEventListener("resize",resize);frame();
+})();
+</script>
+</body>
+</html>
