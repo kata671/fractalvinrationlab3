@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Struktura jako programowalna częstotliwość — Fractal Vibration Lab</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --surface: #181b21;
+      --text: #e6e8ec;
+      --text-muted: #9aa3b2;
+      --accent: #7dd3c0;
+      --border: #2a2f3a;
+      --max-width: 720px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 60px 20px;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 48px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px;
+    }
+
+    .lab-name {
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 48px 0 16px;
+      color: var(--text);
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    ul {
+      margin: 16px 0 28px 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .section {
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      padding: 20px 24px;
+      margin: 36px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 40px 16px;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="lab-name">Fractal Vibration Lab</div>
+      <h1>Struktura jako programowalna częstotliwość</h1>
+      <p class="subtitle">Notatka koncepcyjna</p>
+    </header>
+
+    <p>W klasycznym podejściu do projektowania systemów falowych obowiązywała jasna hierarchia: najpierw wybierano częstotliwość pracy, a następnie dostosowywano do niej geometrię. Ostatnie lata odwróciły tę logikę. Coraz wyraźniej widać, że to <strong>struktura</strong> staje się aktywnym, programowalnym stopniem swobody — narzędziem, które pozwala dynamicznie kształtować, multipleksować i optymalizować odpowiedź częstotliwościową układu.</p>
+
+    <p>Szczególnie obiecującym kandydatem do pełnienia tej roli okazuje się geometria fraktalna.</p>
+
+    <h2>Trzy kierunki wskazujące zmianę paradygmatu</h2>
+
+    <div class="section">
+      <p><strong>1. Frequency-multiplexed metasurfaces</strong><br>
+      Jedna starannie zaprojektowana struktura potrafi jednocześnie fokusować fale o różnych częstotliwościach w różne lokalizacje przestrzenne. Przestaje być filtrem o jednej charakterystyce, a staje się multiplekserem przestrzenno-częstotliwościowym. Geometria fraktalna naturalnie wspiera takie rozwiązania dzięki samopodobieństwu — ta sama reguła, powtarzana w różnych skalach, pozwala strukturze oddziaływać z wieloma długościami fal jednocześnie.</p>
+    </div>
+
+    <div class="section">
+      <p><strong>2. Shape-changing i rekonfigurowalne struktury</strong><br>
+      Częstotliwość rezonansowa może być strojona poprzez rozciąganie, ściskanie lub zginanie samej geometrii. Struktura przestaje być statycznym parametrem projektu i staje się stopniem swobody sterowanym w czasie rzeczywistym. W przypadku struktur fraktalnych deformacja jednej skali wpływa na właściwości pozostałych, otwierając bogatsze możliwości programowania odpowiedzi częstotliwościowej.</p>
+    </div>
+
+    <div class="section">
+      <p><strong>3. Struktury generowane algorytmicznie</strong><br>
+      Algorytmy sztucznej inteligencji przeszukują ekstremalnie wysokowymiarowe przestrzenie geometrii, odkrywając rozwiązania, których człowiek nie byłby w stanie zaprojektować intuicyjnie. Fraktale stanowią szczególnie interesującą klasę struktur dla takich metod — ich parametry generujące (skala, kąt, liczba iteracji) tworzą zwartą, a jednocześnie bogatą przestrzeń poszukiwań.</p>
+    </div>
+
+    <h2>Synteza</h2>
+
+    <p>Obserwujemy spójny trend: struktura przestaje służyć częstotliwości i zaczyna ją <strong>programować</strong>.</p>
+
+    <p>Możemy wyróżnić kilka poziomów tej programowalności:</p>
+    <ul>
+      <li>geometria stała</li>
+      <li>geometria deformowalna</li>
+      <li>geometria multipleksująca</li>
+      <li>geometria generowana algorytmicznie</li>
+      <li><strong>geometria fraktalna</strong></li>
+    </ul>
+
+    <p>Fraktale zajmują wśród nich szczególne miejsce. Łączą cechy, które w innych podejściach występują osobno: samopodobieństwo, wieloskalowość oraz wysoką wrażliwość na parametry generujące. Dzięki temu stają się naturalnym językiem programowania odpowiedzi częstotliwościowej.</p>
+
+    <h2>Kierunki badawcze</h2>
+
+    <p>W ramach Fractal Vibration Lab naturalne wydają się następujące ścieżki:</p>
+    <ul>
+      <li>systematyczne mapowanie parametrów fraktalnych na widmo częstotliwościowe</li>
+      <li>badanie deformowalnych struktur fraktalnych</li>
+      <li>proste eksperymenty akustyczne i wibracyjne z geometriami fraktalnymi</li>
+      <li>łączenie geometrii fraktalnej z metodami optymalizacji algorytmicznej</li>
+    </ul>
+
+    <div class="highlight">
+      <p>W systemach 6G i post-6G antena, filtr czy metasurface nie będą już jedynie „pracować na częstotliwości X”. Będą <strong>programowane strukturalnie</strong>. Geometria fraktalna może stać się jednym z kluczowych języków tego programowania.</p>
+      <p style="margin-bottom:0">To nie jest tylko ewolucja technologiczna.<br>
+      To zmiana fundamentalnego założenia:<br>
+      z „częstotliwość dyktuje strukturę”<br>
+      na „struktura programuje częstotliwość”.</p>
+    </div>
+
+    <footer>
+      Fractal Vibration Lab<br>
+      Exploring structure as a programmable degree of freedom for frequency
+    </footer>
+  </div>
+</body>
+</html>
