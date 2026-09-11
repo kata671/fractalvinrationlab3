@@ -42,8 +42,6 @@ body::before{
 a{color:var(--accent);text-decoration:none;transition:color .2s}
 a:hover{color:var(--accent2)}
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
-
-/* NAV */
 nav{
   position:sticky;top:0;z-index:100;
   background:rgba(3,5,10,.75);backdrop-filter:blur(20px) saturate(1.4);
@@ -88,8 +86,6 @@ nav .inner{
 @media(max-width:720px){
   .nav-links{display:none}
 }
-
-/* HERO */
 .hero{
   padding:88px 0 72px;position:relative;
   border-bottom:1px solid var(--border);
@@ -150,8 +146,6 @@ h1{
   border:1px solid var(--border2);
 }
 .btn-ghost:hover{color:var(--text);border-color:var(--accent);background:rgba(111,216,255,.1)}
-
-/* SECTIONS */
 section{padding:72px 0;border-bottom:1px solid var(--border);position:relative;z-index:1}
 section:last-of-type{border-bottom:none}
 h2{
@@ -164,8 +158,6 @@ p{margin-bottom:14px}
 .muted{color:var(--muted)}
 ul,ol{margin:12px 0 18px 20px;color:var(--muted)}
 li{margin-bottom:8px}
-
-/* GLASS CARDS */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
@@ -187,8 +179,6 @@ li{margin-bottom:8px}
   background:rgba(111,216,255,.1);border:1px solid var(--border);
   display:grid;place-items:center;font-size:16px;
 }
-
-/* PANEL */
 .panel{
   background:var(--panel);backdrop-filter:blur(12px);
   border:1px solid var(--border);border-radius:var(--radius);
@@ -205,8 +195,6 @@ li{margin-bottom:8px}
   border-radius:12px;padding:16px 20px;margin:16px 0;
   overflow-x:auto;color:var(--accent2);letter-spacing:.02em;
 }
-
-/* TABLE */
 .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);margin:20px 0}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border)}
@@ -218,16 +206,12 @@ th{
 td{color:var(--muted)}
 tr:last-child td{border-bottom:none}
 tr:hover td{color:var(--text);background:rgba(111,216,255,.03)}
-
-/* PLOT */
 .plot-box{
   background:rgba(0,0,0,.3);border-radius:var(--radius);padding:16px;
   border:1px solid var(--border);margin:24px 0;
 }
 .plot-box img{max-width:100%;height:auto;border-radius:10px;display:block;margin:0 auto}
 .plot-cap{font-size:12px;color:var(--dim);margin-top:12px}
-
-/* ATLAS */
 .atlas-card{
   background:var(--panel);border:1px solid var(--border);
   border-radius:var(--radius);overflow:hidden;transition:all .3s;
@@ -247,8 +231,6 @@ tr:hover td{color:var(--text);background:rgba(111,216,255,.03)}
 .atlas-card .meta{padding:14px}
 .atlas-card .meta .f{font-size:14px;font-weight:600}
 .atlas-card .meta .d{font-size:12px;color:var(--muted);margin-top:4px}
-
-/* STEPS */
 .steps{counter-reset:step;list-style:none;margin-left:0}
 .steps li{
   counter-increment:step;position:relative;
@@ -264,8 +246,6 @@ tr:hover td{color:var(--text);background:rgba(111,216,255,.03)}
   color:var(--accent);font-size:12px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
 }
-
-/* FOOTER */
 footer{
   padding:48px 0 64px;color:var(--dim);font-size:13px;
   border-top:1px solid var(--border);position:relative;z-index:1;
@@ -274,14 +254,11 @@ footer{
 .footer-links{display:flex;gap:20px;flex-wrap:wrap}
 .footer-links a{color:var(--muted);font-weight:500}
 .footer-links a:hover{color:var(--accent)}
-
 code{
   font-family:"JetBrains Mono",monospace;font-size:.88em;
   background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;
   border:1px solid var(--border);color:var(--accent2);
 }
-
-/* STAT STRIP */
 .stat-strip{
   display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:32px 0 8px;
 }
@@ -300,7 +277,6 @@ code{
 </style>
 </head>
 <body>
-
 <nav>
   <div class="inner">
     <div class="logo">
@@ -317,6 +293,7 @@ code{
         <a href="#tools" data-i18n="nav_tools">Narzędzia</a>
         <a href="#reproduce" data-i18n="nav_reproduce">Jak powtórzyć</a>
         <a href="#next" data-i18n="nav_next">Dalej</a>
+        <a href="research/struktura-jako-programowalna-czestotliwosc.html">Research</a>
         <a href="#faq" data-i18n="nav_faq">FAQ</a>
       </div>
       <div class="lang-switch" role="group" aria-label="Language">
@@ -326,7 +303,6 @@ code{
     </div>
   </div>
 </nav>
-
 <header class="hero">
   <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
   <div class="wrap">
@@ -354,7 +330,6 @@ code{
     </div>
   </div>
 </header>
-
 <section id="faem">
   <div class="wrap">
     <h2 data-i18n="faem_h2">Czym jest FAEM</h2>
@@ -386,7 +361,6 @@ code{
     </div>
   </div>
 </section>
-
 <section id="chladni">
   <div class="wrap">
     <h2 data-i18n="ch_h2">Skalowanie nodalne</h2>
@@ -438,7 +412,6 @@ code{
     </div>
   </div>
 </section>
-
 <section id="atlas">
   <div class="wrap">
     <h2 data-i18n="atlas_h2">Atlas częstotliwości</h2>
@@ -446,7 +419,6 @@ code{
     <div class="grid-4" id="atlasGrid"></div>
   </div>
 </section>
-
 <section id="tools">
   <div class="wrap">
     <h2 data-i18n="tools_h2">Narzędzia</h2>
@@ -471,7 +443,6 @@ code{
     </div>
   </div>
 </section>
-
 <section id="reproduce">
   <div class="wrap">
     <h2 data-i18n="rep_h2">Jak powtórzyć</h2>
@@ -487,12 +458,18 @@ code{
     </ol>
   </div>
 </section>
-
 <section id="next">
   <div class="wrap">
     <h2 data-i18n="next_h2">Dalej</h2>
     <p class="section-lead" data-i18n="next_lead">Naturalne rozszerzenia.</p>
     <div class="grid-2">
+      <div class="card">
+        <h4>Struktura jako programowalna częstotliwość</h4>
+        <p>Notatka koncepcyjna o geometrii fraktalnej jako programowalnym stopniu swobody częstotliwości.</p>
+        <div class="cta-row" style="margin-top:16px">
+          <a class="btn btn-ghost" href="research/struktura-jako-programowalna-czestotliwosc.html">Czytaj</a>
+        </div>
+      </div>
       <div class="card"><h4 data-i18n="next_1_t">Kontrolowany eksperyment</h4><p data-i18n="next_1_p">Własna płyta, 15–20 częstotliwości, zapis sygnału — pełny łańcuch widmo → domeny → Df.</p></div>
       <div class="card"><h4 data-i18n="next_2_t">Geometrie</h4><p data-i18n="next_2_p">Kwadrat vs koło: jak zmienia się wykładnik α w N ~ f^α.</p></div>
       <div class="card"><h4 data-i18n="next_3_t">Df + domeny</h4><p data-i18n="next_3_p">Wymiar fraktalny linii węzłowych obok liczby domen na tych samych obrazach.</p></div>
@@ -500,8 +477,6 @@ code{
     </div>
   </div>
 </section>
-
-
 <section id="about">
   <div class="wrap">
     <h2 data-i18n="about_h2">O projekcie</h2>
@@ -518,7 +493,6 @@ code{
     </div>
   </div>
 </section>
-
 <section id="faq">
   <div class="wrap">
     <h2 data-i18n="faq_h2">FAQ</h2>
@@ -551,7 +525,6 @@ code{
     </div>
   </div>
 </section>
-
 <section id="contact">
   <div class="wrap">
     <h2 data-i18n="contact_h2">Kontakt</h2>
@@ -559,7 +532,6 @@ code{
     <a href="mailto:fractalvibrationlab@gmail.com">fractalvibrationlab@gmail.com</a></p>
   </div>
 </section>
-
 <footer>
   <div class="wrap footer-grid">
     <div>
@@ -570,12 +542,12 @@ code{
     <div class="footer-links">
       <a href="faem_generator.html" data-i18n="ft_gen">Generator</a>
       <a href="VERIFICATION.md" data-i18n="ft_report">Raport</a>
+      <a href="research/struktura-jako-programowalna-czestotliwosc.html">Research</a>
       <a href="mailto:fractalvibrationlab@gmail.com">Email</a>
       <a href="https://fractalvibrationlab.com/" data-i18n="ft_site">fractalvibrationlab.com</a>
     </div>
   </div>
 </footer>
-
 <script>
 const ATLAS=[{f:155,n:3},{f:467.5,n:8},{f:1146,n:8},{f:2250,n:13},{f:2593,n:16},{f:4930,n:16},{f:6197,n:24},{f:6800,n:28}];
 function renderAtlas(lang){
